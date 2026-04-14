@@ -47,6 +47,9 @@ jobs:
           min-coverage-overall: 80
           min-coverage-changed-files: 80
 
+      - name: Run mutation tests
+        run: ./gradlew pitest
+
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()

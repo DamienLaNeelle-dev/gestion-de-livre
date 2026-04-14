@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "3.5.13"
 	id("io.spring.dependency-management") version "1.1.7"
 	jacoco
+	id("info.solidsoft.pitest") version "1.15.0"
 }
 
 group = "com.example"
@@ -40,13 +41,24 @@ tasks.withType<Test> {
 	reports {
 		junitXml.required.set(true)
 	}
-	finalizedBy(tasks.jacocoTestReport)
 }
 
-tasks.jacocoTestReport {
+tasks.named<JacocoReport>("jacocoTestReport") {
 	dependsOn(tasks.test)
 	reports {
 		xml.required.set(true)
 		html.required.set(true)
 	}
+}
+
+tasks.test {
+	finalizedBy(tasks.named("jacocoTestReport"))
+}
+
+configure<info.solidsoft.gradle.pitest.PitestPluginExtension> {
+	junit5PluginVersion.set("1.2.1")
+	targetClasses.set(setOf("com.example.gestion_de_livre.domain.*"))
+	targetTests.set(setOf("com.example.gestion_de_livre.domain.*"))
+	mutationThreshold.set(80)
+	outputFormats.set(setOf("HTML", "XML"))
 }
