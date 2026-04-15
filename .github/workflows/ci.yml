@@ -36,6 +36,9 @@ jobs:
       - name: Run tests
         run: ./gradlew test
 
+      - name: Run integration tests
+        run: ./gradlew testIntegration
+
       - name: Generate JaCoCo report
         run: ./gradlew jacocoTestReport
 
@@ -50,14 +53,10 @@ jobs:
       - name: Run mutation tests
         run: ./gradlew pitest
 
-      - name: Run integration tests
-        run: ./gradlew testIntegration
-
-      - name: Generate JaCoCo report
-        run: ./gradlew jacocoTestReport
-
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
-          files: build/test-results/test/*.xml
+          files: |
+            build/test-results/test/*.xml
+            build/test-results/testIntegration/*.xml

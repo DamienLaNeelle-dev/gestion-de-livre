@@ -20,23 +20,6 @@ repositories {
 	mavenCentral()
 }
 
-dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
-	testImplementation("io.kotest:kotest-assertions-core:5.9.1")
-	testImplementation("io.kotest:kotest-property:5.9.1")
-	testImplementation("io.mockk:mockk:1.13.8")
-}
-
-kotlin {
-	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict")
-	}
-}
-
 testing {
 	suites {
 		val testIntegration by registering(JvmTestSuite::class) {
@@ -56,6 +39,17 @@ val testIntegrationImplementation: Configuration by configurations.getting {
 }
 
 dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-jdbc")
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.liquibase:liquibase-core")
+	implementation("org.postgresql:postgresql")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
+	testImplementation("io.kotest:kotest-assertions-core:5.9.1")
+	testImplementation("io.kotest:kotest-property:5.9.1")
+	testImplementation("io.mockk:mockk:1.13.8")
 	testIntegrationImplementation("io.mockk:mockk:1.13.8")
 	testIntegrationImplementation("io.kotest:kotest-assertions-core:5.9.1")
 	testIntegrationImplementation("io.kotest:kotest-runner-junit5:5.9.1")
@@ -63,6 +57,15 @@ dependencies {
 	testIntegrationImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
 	testIntegrationImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(module = "mockito-core")
+	}
+	testIntegrationImplementation("org.testcontainers:postgresql:1.19.1")
+	testIntegrationImplementation("org.testcontainers:testcontainers:1.19.1")
+	testIntegrationImplementation("io.kotest.extensions:kotest-extensions-testcontainers:2.0.2")
+}
+
+kotlin {
+	compilerOptions {
+		freeCompilerArgs.addAll("-Xjsr305=strict")
 	}
 }
 
