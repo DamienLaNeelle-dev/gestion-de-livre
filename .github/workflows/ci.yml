@@ -50,6 +50,12 @@ jobs:
       - name: Run mutation tests
         run: ./gradlew pitest
 
+      - name: Run integration tests
+        run: ./gradlew testIntegration
+
+      - name: Generate JaCoCo report
+        run: ./gradlew jacocoTestReport
+
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
