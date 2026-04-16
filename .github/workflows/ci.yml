@@ -39,6 +39,9 @@ jobs:
       - name: Run integration tests
         run: ./gradlew testIntegration
 
+      - name: Run component tests
+        run: ./gradlew testComponent
+
       - name: Generate JaCoCo report
         run: ./gradlew jacocoTestReport
 

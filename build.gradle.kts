@@ -43,6 +43,16 @@ testing {
 				runtimeClasspath += sourceSets.main.get().output
 			}
 		}
+
+		val testArchitecture by registering(JvmTestSuite::class) {
+			sources {
+				kotlin {
+					setSrcDirs(listOf("src/testArchitecture/kotlin"))
+				}
+				compileClasspath += sourceSets.main.get().output
+				runtimeClasspath += sourceSets.main.get().output
+			}
+		}
 	}
 }
 
@@ -51,6 +61,10 @@ val testIntegrationImplementation: Configuration by configurations.getting {
 }
 
 val testComponentImplementation: Configuration by configurations.getting {
+	extendsFrom(configurations.implementation.get())
+}
+
+val testArchitectureImplementation: Configuration by configurations.getting {
 	extendsFrom(configurations.implementation.get())
 }
 
@@ -87,6 +101,9 @@ dependencies {
 	testComponentImplementation("org.testcontainers:postgresql:1.19.1")
 	testComponentImplementation("io.kotest:kotest-assertions-core:5.9.1")
 	testComponentImplementation("org.springframework.boot:spring-boot-starter-test")
+	testArchitectureImplementation("com.tngtech.archunit:archunit-junit5:1.0.1")
+	testArchitectureImplementation("io.kotest:kotest-assertions-core:5.9.1")
+	testArchitectureImplementation("io.kotest:kotest-runner-junit5:5.9.1")
 }
 
 kotlin {
