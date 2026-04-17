@@ -148,3 +148,20 @@ configure<info.solidsoft.gradle.pitest.PitestPluginExtension> {
 	timeoutConstInMillis.set(10000)
 	threads.set(1)
 }
+
+val detektCli by configurations.creating
+
+dependencies {
+	// ... tes dépendances existantes
+	detektCli("io.gitlab.arturbosch.detekt:detekt-cli:1.23.6")
+}
+
+tasks.register<JavaExec>("detekt") {
+	mainClass.set("io.gitlab.arturbosch.detekt.cli.Main")
+	classpath = detektCli
+	args(
+		"--input", "src/main/kotlin",
+		"--config", "config/detekt.yml",
+		"--build-upon-default-config"
+	)
+}
