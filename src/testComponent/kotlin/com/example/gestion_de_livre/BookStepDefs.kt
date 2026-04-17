@@ -20,6 +20,7 @@ class BookStepDefs(
     private var port: Int = 0
 
     private lateinit var lastResult: ValidatableResponse
+    private lateinit var lastReservationResult: ValidatableResponse
 
     @Before
     fun setup() {
@@ -48,6 +49,14 @@ class BookStepDefs(
             .statusCode(200)
     }
 
+    @When("l'utilisateur réserve le livre {string}")
+    fun reserveBook(title: String) {
+        lastReservationResult = RestAssured.given()
+            .`when`()
+            .patch("/books/$title/reserve")
+            .then()
+    }
+
     @Then("la liste contient les livres suivants")
     fun checkBooks(books: List<Map<String, String>>) {
         val titles = lastResult.extract().jsonPath().getList<String>("title")
@@ -58,5 +67,17 @@ class BookStepDefs(
             titles[index] shouldBe book["title"]
             authors[index] shouldBe book["author"]
         }
+    }
+
+    @Then("le livre {string} est marqué comme non disponible")
+    fun checkBookNotAvailable(title: String) {
+        lastReservationResult.statusCode(200)
+        val available = lastReservationResult.extract().jsonPath().getBoolean("available")
+        available shouldBe false
+    }
+
+    @Then("la réservation échoue avec une erreur 400")
+    fun checkReservationFails() {
+        lastReservationResult.statusCode(400)
     }
 }

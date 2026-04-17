@@ -1,0 +1,16 @@
+{
+  "scenarios": {
+    "load": {
+      "executor": "constant-arrival-rate",
+      "rate": 50,
+      "duration": "30s",
+      "preAllocatedVUs": 10,
+      "maxVUs": 50,
+      "exec": "test_books"
+    }
+  },
+  "thresholds": {
+    "failed_requests": ["rate<0.01"],
+    "http_req_duration": ["p(95)<500"]
+  }
+}

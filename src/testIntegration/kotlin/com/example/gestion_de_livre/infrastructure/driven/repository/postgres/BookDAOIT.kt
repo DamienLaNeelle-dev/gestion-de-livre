@@ -33,34 +33,49 @@ class BookDAOIT(
 
     init {
         beforeEach {
-            namedParameterJdbcTemplate.update(
-                "DELETE FROM book",
-                MapSqlParameterSource()
-            )
+            namedParameterJdbcTemplate.update("DELETE FROM book", MapSqlParameterSource())
         }
 
         afterSpec {
             container.stop()
         }
 
-        test("save insère un livre en base") {
+        test("save insère un livre en base avec available=true par défaut") {
             bookDAO.save(Book("Clean Code", "Robert Martin"))
             val books = bookDAO.findAll()
             books.size shouldBe 1
-            books[0] shouldBe Book("Clean Code", "Robert Martin")
+            books[0] shouldBe Book("Clean Code", "Robert Martin", available = true)
         }
 
         test("findAll retourne tous les livres") {
             bookDAO.save(Book("Clean Code", "Robert Martin"))
             bookDAO.save(Book("Algorithmes", "Cormen"))
             bookDAO.findAll() shouldContainExactlyInAnyOrder listOf(
-                Book("Clean Code", "Robert Martin"),
-                Book("Algorithmes", "Cormen")
+                Book("Clean Code", "Robert Martin", available = true),
+                Book("Algorithmes", "Cormen", available = true)
             )
         }
 
         test("findAll retourne liste vide si aucun livre") {
             bookDAO.findAll() shouldBe emptyList()
+        }
+
+        test("findByTitle retourne le livre correspondant") {
+            bookDAO.save(Book("Clean Code", "Robert Martin"))
+            val result = bookDAO.findByTitle("Clean Code")
+            result shouldBe Book("Clean Code", "Robert Martin", available = true)
+        }
+
+        test("findByTitle retourne null si le livre n'existe pas") {
+            val result = bookDAO.findByTitle("Inconnu")
+            result shouldBe null
+        }
+
+        test("update modifie la disponibilité du livre") {
+            bookDAO.save(Book("Clean Code", "Robert Martin"))
+            bookDAO.update(Book("Clean Code", "Robert Martin", available = false))
+            val result = bookDAO.findByTitle("Clean Code")
+            result shouldBe Book("Clean Code", "Robert Martin", available = false)
         }
     }
 }

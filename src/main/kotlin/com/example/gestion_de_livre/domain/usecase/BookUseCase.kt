@@ -16,4 +16,13 @@ class BookUseCase(private val bookPort: BookPort) {
     fun getAllBooks(): List<Book> {
         return bookPort.findAll().sortedBy { it.title }
     }
+
+    fun reserveBook(title: String): Book {
+        val book = bookPort.findByTitle(title)
+            ?: throw IllegalArgumentException("Le livre '$title' n'existe pas.")
+        require(book.available) { "Le livre '$title' est déjà réservé." }
+        val reservedBook = book.copy(available = false)
+        bookPort.update(reservedBook)
+        return reservedBook
+    }
 }

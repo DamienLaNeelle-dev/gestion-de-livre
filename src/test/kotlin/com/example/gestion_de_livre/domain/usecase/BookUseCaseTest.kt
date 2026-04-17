@@ -55,13 +55,42 @@ class BookUseCaseTest : FunSpec({
         bookUseCase.getAllBooks() shouldBe emptyList()
     }
 
-    // Property-based tests
+    test("réserver un livre disponible le marque comme non disponible") {
+        val book = Book("Clean Code", "Robert Martin", available = true)
+        every { bookPort.findByTitle("Clean Code") } returns book
+        every { bookPort.update(any()) } returns Unit
+
+        val result = bookUseCase.reserveBook("Clean Code")
+
+        result shouldBe Book("Clean Code", "Robert Martin", available = false)
+        verify(exactly = 1) { bookPort.update(Book("Clean Code", "Robert Martin", available = false)) }
+    }
+
+    test("réserver un livre déjà réservé lance une exception") {
+        val book = Book("Clean Code", "Robert Martin", available = false)
+        every { bookPort.findByTitle("Clean Code") } returns book
+
+        shouldThrow<IllegalArgumentException> {
+            bookUseCase.reserveBook("Clean Code")
+        }
+    }
+
+    test("réserver un livre inexistant lance une exception") {
+        every { bookPort.findByTitle("Inconnu") } returns null
+
+        shouldThrow<IllegalArgumentException> {
+            bookUseCase.reserveBook("Inconnu")
+        }
+    }
+
+
     test("la liste retournée contient tous les éléments stockés") {
         checkAll<String, String, String, String> { t1, a1, t2, a2 ->
-            every { bookPort.findAll() } returns listOf(Book(t1, a1), Book(t2, a2))
+            val books = listOf(Book(t1, a1), Book(t2, a2))
+            every { bookPort.findAll() } returns books
             val result = bookUseCase.getAllBooks()
-            result.size shouldBe 2
-            result.containsAll(listOf(Book(t1, a1), Book(t2, a2))) shouldBe true
+            result.size shouldBe books.size
+            result.containsAll(books) shouldBe true
         }
     }
 

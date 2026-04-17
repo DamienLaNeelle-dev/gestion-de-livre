@@ -11,8 +11,8 @@ class BookDAO(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate
 
     override fun save(book: Book) {
         namedParameterJdbcTemplate.update(
-            "INSERT INTO book (title, author) VALUES (:title, :author)",
-            mapOf("title" to book.title, "author" to book.author)
+            "INSERT INTO book (title, author, available) VALUES (:title, :author, :available)",
+            mapOf("title" to book.title, "author" to book.author, "available" to book.available)
         )
     }
 
@@ -23,8 +23,29 @@ class BookDAO(private val namedParameterJdbcTemplate: NamedParameterJdbcTemplate
         ) { rs, _ ->
             Book(
                 title = rs.getString("title"),
-                author = rs.getString("author")
+                author = rs.getString("author"),
+                available = rs.getBoolean("available")
             )
         }
+    }
+
+    override fun findByTitle(title: String): Book? {
+        return namedParameterJdbcTemplate.query(
+            "SELECT * FROM book WHERE title = :title",
+            mapOf("title" to title)
+        ) { rs, _ ->
+            Book(
+                title = rs.getString("title"),
+                author = rs.getString("author"),
+                available = rs.getBoolean("available")
+            )
+        }.firstOrNull()
+    }
+
+    override fun update(book: Book) {
+        namedParameterJdbcTemplate.update(
+            "UPDATE book SET available = :available WHERE title = :title",
+            mapOf("available" to book.available, "title" to book.title)
+        )
     }
 }

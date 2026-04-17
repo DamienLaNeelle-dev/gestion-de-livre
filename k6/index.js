@@ -3,9 +3,10 @@ import { Rate } from 'k6/metrics';
 
 const failureRate = new Rate('failed_requests');
 
+const titles = ['Clean Code', 'Refactoring', 'Design Patterns', 'The Pragmatic Programmer'];
+const authors = ['Robert Martin', 'Martin Fowler', 'Gang of Four', 'Andrew Hunt'];
+
 export function test_books() {
-    const titles = ['Clean Code', 'Refactoring', 'Design Patterns', 'The Pragmatic Programmer'];
-    const authors = ['Robert Martin', 'Martin Fowler', 'Gang of Four', 'Andrew Hunt'];
     const randomIndex = Math.floor(Math.random() * titles.length);
 
     const createRes = http.post(
