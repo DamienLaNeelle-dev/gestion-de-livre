@@ -1,0 +1,17 @@
+{
+  "discardResponseBodies": true,
+  "scenarios": {
+    "books_scenario": {
+      "executor": "constant-arrival-rate",
+      "rate": 10,
+      "duration": "10s",
+      "preAllocatedVUs": 5,
+      "maxVUs": 20,
+      "exec": "test_books"
+    }
+  },
+  "thresholds": {
+    "failed_requests": ["rate<0.01"],
+    "http_req_duration{scenario:books_scenario}": ["p(95)<500"]
+  }
+}
